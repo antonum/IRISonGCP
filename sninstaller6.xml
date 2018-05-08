@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="SN.DefaultInstaller">
+<Super>%RegisteredObject</Super>
+<TimeCreated>63852,47866.843237</TimeCreated>
+
+<XData name="SNInstall">
+<XMLNamespace>INSTALLER</XMLNamespace>
+<Data><![CDATA[
+<Manifest>
+	<SystemSetting Name="Config.config.globals8kb"  Value="10000"/>      
+	<SystemSetting Name="Config.config.routines"  Value="256"/>      
+	<SystemSetting Name="Config.config.locksiz"  Value="16777216"/>      
+	<SystemSetting Name="Config.config.gmheap"  Value="37568"/> 
+	<SystemSetting Name="Config.SQL.SaveMAC"  Value="1"/>      
+	<!--<SystemSetting Name="Config.Journal.CurrentDirectory"  Value=""/>      
+	<SystemSetting Name="Config.Journal.AlternateDirectory"  Value=""/>   
+	-->   
+  	<Namespace Name="%SYS">
+         <Invoke Class="SN.DefaultInstaller" Method="EnableSharding" CheckStatus="1"/>
+    </Namespace>
+    <Namespace Name="HIDATA" Create="yes" Code="HIDATA" Data="HIDATA">
+	    <Configuration>
+		<Database Name="HIDATA"
+				 Dir="/usr/IRIS/mgr/HIDATA/"
+				 MountAtStartup="true"
+				 MountRequired="true"
+				 Create="yes"/>
+	     </Configuration>
+    </Namespace>
+    
+	<Namespace Name="%SYS">
+         <Invoke Class="SN.DefaultInstaller" Method="EnableSharding" CheckStatus="1"/>
+    </Namespace>
+
+   </Manifest>
+]]></Data>
+</XData>
+
+<Method name="EnableSharding">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ set sc=$system.Sharding.EnableSharding()
+ quit sc
+]]></Implementation>
+</Method>
+
+<Method name="ConfigureShards">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ if $system.Util.InstallDirectory()["master" {
+	    set namespace="HIDATA"
+		//s ^ISC.SS("useloopbackip")=1
+        set sc=$system.Sharding.AssignShard(namespace,"localhost",1972,"SHARD1")
+        set sc=$system.Sharding.AssignShard(namespace,"localhost",1972,"SHARD2")
+} else {
+ 	s sc=$$$OK
+ }
+ quit sc
+]]></Implementation>
+</Method>
+
+<Method name="setup">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec><![CDATA[&pVars,pLogLevel:%Integer=3,pInstaller:%Installer.Installer,pLogger:%Installer.AbstractLogger]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+   #; Let XGL document generate code for this method. 
+   Quit ##class(%Installer.Manifest).%Generate(%compiledclass,%code, "SNInstall")
+]]></Implementation>
+</Method>
+</Class>
+</Export>
