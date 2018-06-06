@@ -1,15 +1,15 @@
 #! /bin/bash
 mkdir /tmp/irisdistr
-gsutil cp gs://iris-distr/*.* /tmp/irisdistr
+gsutil cp gs://antons-demo/*.* /tmp/irisdistr
 cd /tmp/irisdistr
-tar -xvf IDP-2018.1.0.513.0-lnxrhx64.tar.gz
+tar -xvf IRIS-2018.1.1.643.0-lnxrhx64.tar.gz
 mkdir /usr/IRIS
-cd IDP-2018.1.0.513.0-lnxrhx64
+cd IRIS-2018.1.1.643.0-lnxrhx64
 ISC_PACKAGE_PLATFORM="lnxrhx64" \
 ISC_PACKAGE_INSTANCENAME="IRIS" \
 ISC_PACKAGE_INSTALLDIR="/usr/IRIS" \
 ISC_INSTALLER_MANIFEST="/tmp/irisdistr/sninstaller6.xml" \
-./cinstall_silent \
-&& cp /tmp/irisdistr/license.key /usr/IRIS/mgr \
-&& ccontrol stop IRIS quietly \
-&& ccontrol start IRIS
+./irisinstall_silent \
+&& cp /tmp/irisdistr/iris.key /usr/IRIS/mgr \
+&& iris stop IRIS quietly \
+&& iris start IRIS
